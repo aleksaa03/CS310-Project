@@ -1,0 +1,43 @@
+{
+  "watchlist": [
+    {
+      "id": "b147",
+      "title": "Severance",
+      "img": "https://m.media-amazon.com/images/M/MV5BZDI5YzJhODQtMzQyNy00YWNmLWIxMjUtNDBjNjA5YWRjMzExXkEyXkFqcGc@._V1_SX300.jpg",
+      "imdbId": "tt11280740",
+      "type": "series",
+      "released": "18 Feb 2022",
+      "imdbRating": "8.7",
+      "plot": "Mark leads a team of office workers whose memories have been surgically divided between their work and personal lives. When a mysterious colleague appears outside of work, it begins a journey to discover the truth about their jobs.",
+      "actors": "Adam Scott, Britt Lower, Zach Cherry",
+      "genre": "Drama, Mystery, Sci-Fi",
+      "watched": false
+    },
+    {
+      "id": "36e0",
+      "title": "Severance",
+      "img": "https://m.media-amazon.com/images/M/MV5BZDliZTQwZDgtYTIyYy00NWU0LWI1ZmItNjM1ZjkzYWQ0NWFkXkEyXkFqcGc@._V1_SX300.jpg",
+      "imdbId": "tt0464196",
+      "type": "movie",
+      "released": "25 Aug 2006",
+      "imdbRating": "6.4",
+      "plot": "During a team-building retreat in the mountains a group of sales representatives are hunted down one by one.",
+      "actors": "Danny Dyer, Laura Harris, Tim McInnerny",
+      "genre": "Comedy, Horror",
+      "watched": false
+    },
+    {
+      "id": "9557",
+      "title": "Severance",
+      "img": "https://m.media-amazon.com/images/M/MV5BYmZhMzFlYzktNjM2MS00YTZkLThhODctMTExZmE5ODc1YTIzXkEyXkFqcGc@._V1_SX300.jpg",
+      "imdbId": "tt0096074",
+      "type": "movie",
+      "released": "23 Oct 1988",
+      "imdbRating": "5.4",
+      "plot": "When a young girl becomes caught up in the dangerous and self-destructive world of drugs, her ex-pilot father struggles to save her.",
+      "actors": "Linda Christian-Jones, Rachel Greenstein, Martin Haber",
+      "genre": "Drama, Thriller",
+      "watched": false
+    }
+  ]
+}
