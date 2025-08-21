@@ -38,3 +38,13 @@ CREATE TABLE comments (
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
     FOREIGN KEY (movie_id) REFERENCES movies(id) ON DELETE CASCADE
 );
+
+CREATE TABLE user_logs (
+    id SERIAL PRIMARY KEY,
+    action SMALLINT NOT NULL,
+    description TEXT,
+    details TEXT,
+    event_time TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    user_id INT NOT NULL,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);

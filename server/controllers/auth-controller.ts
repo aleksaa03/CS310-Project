@@ -7,10 +7,11 @@ import ConflictError from "../errors/conflict-error";
 import NotFoundError from "../errors/not-found-error";
 import NotAuthorizedError from "../errors/not-authorized-error";
 import bcrypt from "bcrypt";
-import { UserRole } from "../common/enums";
+import { UserLogType, UserRole } from "../common/enums";
 import { auth } from "../middlewares/auth";
 import jwt from "jsonwebtoken";
 import { JWT_SECRET } from "../common/constants";
+import { addUserLog } from "../services/user-log-service";
 
 const router = Router();
 
@@ -43,6 +44,8 @@ router.post("/register", async (req: Request, res: Response) => {
     user: { id: user.id, username: user.username, roleId: user.roleId },
     message: "User created successfully.",
   });
+
+  await addUserLog(user.id, UserLogType.Auth, "User registered", `User ${user.username} registered successfully`);
 });
 
 router.post("/login", async (req: Request, res: Response) => {
@@ -81,11 +84,20 @@ router.post("/login", async (req: Request, res: Response) => {
   res
     .status(200)
     .json({ user: { id: user.id, username: user.username, roleId: user.roleId }, message: "Login successful." });
+
+  await addUserLog(user.id, UserLogType.Auth, "User logged in", `User ${user.username} logged in successfully`);
 });
 
 router.delete("/logout", auth, async (req: Request, res: Response) => {
   res.clearCookie("token");
   res.sendStatus(200);
+
+  await addUserLog(
+    req.currentUser.id,
+    UserLogType.Auth,
+    "User logged out",
+    `User ${req.currentUser.username} logged out successfully`
+  );
 });
 
 router.get("/check-auth", auth, async (req: Request, res: Response) => {

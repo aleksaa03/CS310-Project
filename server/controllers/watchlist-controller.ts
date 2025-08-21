@@ -7,6 +7,8 @@ import BadRequestError from "../errors/bad-request-error";
 import NotFoundError from "../errors/not-found-error";
 import { isValidDateString } from "../utils/string";
 import Watchlist from "../models/watch-list";
+import { UserLogType } from "../common/enums";
+import { addUserLog } from "../services/user-log-service";
 
 const router = Router();
 
@@ -66,6 +68,13 @@ router.post("/watch-list", auth, async (req: Request, res: Response) => {
   await watchlistRepository.save(watchlistItem);
 
   res.status(201).json({ message: "Movie added to your watchlist." });
+
+  await addUserLog(
+    userId,
+    UserLogType.Add,
+    `Added movie to watchlist with ID ${movie.id}`,
+    `Movie: ${movie.id}, ${movie.title}`
+  );
 });
 
 router.get("/watch-list", auth, async (req: Request, res: Response) => {
@@ -104,11 +113,20 @@ router.patch("/watch-list/:movieId", auth, async (req: Request, res: Response) =
     throw new BadRequestError("Movie not found in your watchlist.");
   }
 
+  const lastWatchStatus = watchlistItem.watched;
+
   watchlistItem.watched = watched;
 
   await watchlistRepository.save(watchlistItem);
 
   res.status(200).json({ message: "Watch status updated successfully." });
+
+  await addUserLog(
+    userId,
+    UserLogType.Update,
+    `Changed watch status for movie with ID ${movieId}`,
+    `Watch status: ${lastWatchStatus ? "watched" : "unwatched"} -> ${watched ? "watched" : "unwatched"}`
+  );
 });
 
 router.delete("/watch-list/:movieId", auth, async (req: Request, res: Response) => {
@@ -127,6 +145,13 @@ router.delete("/watch-list/:movieId", auth, async (req: Request, res: Response) 
   await watchlistRepository.delete({ userId: req.currentUser?.id, movieId });
 
   res.status(200).json({ message: "Movie removed from your watchlist." });
+
+  await addUserLog(
+    req.currentUser.id,
+    UserLogType.Delete,
+    `Removed movie from watchlist with ID ${movieId}`,
+    `Movie ID: ${movieId}`
+  );
 });
 
 export { router as watchlistController };

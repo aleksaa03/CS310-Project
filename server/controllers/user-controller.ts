@@ -6,9 +6,10 @@ import NotFoundError from "../errors/not-found-error";
 import { isNullOrEmpty } from "../utils/string";
 import { auth } from "../middlewares/auth";
 import { validateRole } from "../middlewares/validate-role";
-import { UserRole } from "../common/enums";
+import { UserLogType, UserRole } from "../common/enums";
 import User from "../models/user";
 import bcrypt from "bcrypt";
+import { addUserLog } from "../services/user-log-service";
 
 const router = Router();
 
@@ -38,6 +39,13 @@ router.post("/users", auth, validateRole(UserRole.Admin), async (req: Request, r
   await AppDb.getRepository(User).save(user);
 
   res.status(201).json({ message: "User created successfully." });
+
+  await addUserLog(
+    req.currentUser.id,
+    UserLogType.Add,
+    `Created user with ID ${user.id}`,
+    `User: ${user.id}, ${user.username}`
+  );
 });
 
 router.get("/users", auth, validateRole(UserRole.Admin), async (req: Request, res: Response) => {
@@ -69,12 +77,22 @@ router.put("/users/:userId", auth, validateRole(UserRole.Admin), async (req: Req
     throw new NotFoundError("User don't exists in the system.");
   }
 
+  const lastUsernameValue = user.username;
+  const lastRoleIdValue = user.roleId;
+
   user.username = username;
   user.roleId = roleId;
 
   await userRepository.save(user);
 
   res.status(200).json({ message: "User updated successfully" });
+
+  await addUserLog(
+    req.currentUser.id,
+    UserLogType.Update,
+    `Updated user with ID ${user.id}`,
+    `User: ${user.id}, ${lastUsernameValue} -> ${username}, ${lastRoleIdValue} -> ${roleId}`
+  );
 });
 
 router.delete("/users/:userId", auth, validateRole(UserRole.Admin), async (req: Request, res: Response) => {
@@ -97,6 +115,8 @@ router.delete("/users/:userId", auth, validateRole(UserRole.Admin), async (req: 
   await userRepository.delete({ id: userId });
 
   res.status(200).json({ message: "User deleted successfully." });
+
+  await addUserLog(req.currentUser.id, UserLogType.Delete, `Deleted user with ID ${userId}`, `User ID: ${userId}`);
 });
 
 export { router as userController };

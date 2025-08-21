@@ -11,6 +11,8 @@ import { isNullOrEmpty } from "../utils/string";
 import Watchlist from "../models/watch-list";
 import Comment from "../models/comment";
 import { isValidDateString } from "../utils/string";
+import { addUserLog } from "../services/user-log-service";
+import { UserLogType } from "../common/enums";
 
 const router = Router();
 
@@ -181,6 +183,13 @@ router.post("/movies/:movieId/comments", auth, async (req: Request, res: Respons
 
   await commentRepository.save(commentEntity);
   res.status(201).json({ message: "Comment added successfully." });
+
+  await addUserLog(
+    req.currentUser.id,
+    UserLogType.Add,
+    `Added comment to movie with ID ${movieId}`,
+    `Comment: ${commentEntity.comment}`
+  );
 });
 
 router.get("/movies/:movieId/comments", auth, async (req: Request, res: Response) => {
@@ -242,6 +251,13 @@ router.delete("/movies/:movieId/comments/:commentId", auth, async (req: Request,
   await commentRepository.delete({ id: commentId });
 
   res.status(200).json({ message: "Comment was removed." });
+
+  await addUserLog(
+    req.currentUser.id,
+    UserLogType.Delete,
+    `Deleted comment from movie with ID ${movieId}`,
+    `Comment: ${comment.comment}`
+  );
 });
 
 export { router as movieController };

@@ -13,6 +13,7 @@ import ProtectedRoute from "./shared/protected-route.tsx";
 import User from "./pages/admin/user.tsx";
 import { UserRole } from "./common/enums.ts";
 import Register from "./pages/register.tsx";
+import UserLog from "./pages/admin/user-log.tsx";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.Fragment>
@@ -33,6 +34,10 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
               element={<ProtectedRoute children={<Details />} allowedRoles={[UserRole.Client, UserRole.Admin]} />}
             />
             <Route path="/users" element={<ProtectedRoute children={<User />} allowedRoles={[UserRole.Admin]} />} />
+            <Route
+              path="/user-logs"
+              element={<ProtectedRoute children={<UserLog />} allowedRoles={[UserRole.Admin]} />}
+            />
           </Route>
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />

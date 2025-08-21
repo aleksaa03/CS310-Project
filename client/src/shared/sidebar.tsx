@@ -44,9 +44,14 @@ const Sidebar = () => {
               Watchlist
             </NavLink>
             {currentUser?.roleId === UserRole.Admin && (
-              <NavLink to="/users" className={({ isActive }) => (isActive ? activeClass : normalClass)}>
-                Users
-              </NavLink>
+              <>
+                <NavLink to="/users" className={({ isActive }) => (isActive ? activeClass : normalClass)}>
+                  Users
+                </NavLink>
+                <NavLink to="/user-logs" className={({ isActive }) => (isActive ? activeClass : normalClass)}>
+                  User logs
+                </NavLink>
+              </>
             )}
           </div>
 

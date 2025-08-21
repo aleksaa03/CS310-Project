@@ -11,6 +11,7 @@ import { authController } from "./controllers/auth-controller";
 import { movieController } from "./controllers/movie-controller";
 import { watchlistController } from "./controllers/watchlist-controller";
 import { userController } from "./controllers/user-controller";
+import { userLogController } from "./controllers/user-log-controller";
 
 const app = express();
 const server = http.createServer(app);
@@ -35,6 +36,7 @@ app.use(authController);
 app.use(movieController);
 app.use(watchlistController);
 app.use(userController);
+app.use(userLogController);
 
 app.use(errorHandler);
 

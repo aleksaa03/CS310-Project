@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { UserRole } from "../common/enums";
 import Modal from "../shared/modal";
 import { addUser, deleteUser, editUser } from "../api/services/user-service";
@@ -11,6 +11,19 @@ const UserTable = ({ users, refetchUsers }: { users: IUser[]; refetchUsers: () =
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState<IUser | null>(null);
   const [generatedPassword, setGeneratedPassword] = useState("");
+
+  useEffect(() => {
+    if (isModalOpen) {
+      window.addEventListener("keyup", handleKeyUp);
+      return () => window.removeEventListener("keyup", handleKeyUp);
+    }
+  }, [isModalOpen]);
+
+  const handleKeyUp = (e: KeyboardEvent) => {
+    if (isModalOpen && e.key === "Escape") {
+      handleClose();
+    }
+  };
 
   const handleAdd = () => {
     setIsModalOpen(true);
