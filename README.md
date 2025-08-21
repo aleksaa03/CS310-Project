@@ -1,4 +1,4 @@
-# IT354-Project
+# CS310-Project
 # Movie Collection Management App
 
 A full-stack application for managing a personal movie collection with support for user roles (admin/client), authentication, and watchlists.
