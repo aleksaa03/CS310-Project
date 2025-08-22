@@ -10,6 +10,8 @@ import { UserLogType, UserRole } from "../common/enums";
 import User from "../models/user";
 import bcrypt from "bcrypt";
 import { addUserLog } from "../services/user-log-service";
+import UserSC from "../models/sc/user-sc";
+import { paginate } from "../utils/pagination";
 
 const router = Router();
 
@@ -48,13 +50,21 @@ router.post("/users", auth, validateRole(UserRole.Admin), async (req: Request, r
   );
 });
 
-router.get("/users", auth, validateRole(UserRole.Admin), async (req: Request, res: Response) => {
+router.get("/users", auth, validateRole(UserRole.Admin), async (req: Request<{}, {}, {}, UserSC>, res: Response) => {
+  const sortColums = ["id", "username", "roleId"];
+  const { pageSize, sortExp, sortOrder, skip } = paginate(req.query, sortColums);
+
   const userRepository = AppDb.getRepository(User);
-  const users = await userRepository.find({
-    select: ["id", "username", "roleId"],
+  const [users, total] = await userRepository.findAndCount({
+    select: { id: true, username: true, roleId: true },
+    order: { [sortExp]: sortOrder },
+    skip,
+    take: pageSize,
   });
 
-  res.status(200).json({ users });
+  const totalPages = Math.ceil(total / pageSize);
+
+  res.status(200).json({ users, total, totalPages });
 });
 
 router.put("/users/:userId", auth, validateRole(UserRole.Admin), async (req: Request, res: Response) => {

@@ -6,8 +6,31 @@ import { toast } from "react-toastify";
 import IUser from "../models/user";
 import { LockClosedIcon } from "@heroicons/react/24/outline";
 import { generateRandomPassword } from "../utils/general";
+import { getPageButtons } from "../utils/pagination";
 
-const UserTable = ({ users, refetchUsers }: { users: IUser[]; refetchUsers: () => Promise<void> }) => {
+type UserTableProps = {
+  users: IUser[];
+  refetchUsers: () => Promise<void>;
+  page: number;
+  totalPages: number;
+  onPageChange: (newPage: number) => void;
+  sortExp: string;
+  sortOrd: string;
+  onSort: (column: string) => void;
+  onPageSizeChange: (newPageSize: number) => void;
+};
+
+const UserTable = ({
+  users,
+  refetchUsers,
+  page,
+  totalPages,
+  onPageChange,
+  sortExp,
+  sortOrd,
+  onSort,
+  onPageSizeChange,
+}: UserTableProps) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState<IUser | null>(null);
   const [generatedPassword, setGeneratedPassword] = useState("");
@@ -84,6 +107,10 @@ const UserTable = ({ users, refetchUsers }: { users: IUser[]; refetchUsers: () =
     setGeneratedPassword(generateRandomPassword());
   };
 
+  const pageButtons = getPageButtons(page, totalPages);
+
+  const arrow = (col: string) => (sortExp === col ? (sortOrd === "ASC" ? " ▲" : " ▼") : "");
+
   return (
     <>
       <div className="max-w-5xl mx-auto p-6 bg-white rounded-2xl shadow-xl mt-10">
@@ -100,35 +127,86 @@ const UserTable = ({ users, refetchUsers }: { users: IUser[]; refetchUsers: () =
           <table className="min-w-full table-auto">
             <thead>
               <tr>
-                <th className="px-4 py-2 text-left">ID</th>
-                <th className="px-4 py-2 text-left">Username</th>
-                <th className="px-4 py-2 text-left">Role ID</th>
+                <th className="px-4 py-2 text-left" onClick={() => onSort("id")}>
+                  ID{arrow("id")}
+                </th>
+                <th className="px-4 py-2 text-left" onClick={() => onSort("username")}>
+                  Username{arrow("username")}
+                </th>
+                <th className="px-4 py-2 text-left" onClick={() => onSort("roleId")}>
+                  Role ID{arrow("roleId")}
+                </th>
               </tr>
             </thead>
             <tbody>
-              {users.map((user) => (
-                <tr key={user.id} className="border-b border-t">
-                  <td className="px-4 py-2">{user.id}</td>
-                  <td className="px-4 py-2">{user.username}</td>
-                  <td className="px-4 py-2">{UserRole[user.roleId]}</td>
-                  <td className="px-4 py-2 space-x-2 flex sm:flex-none">
-                    <button
-                      onClick={() => handleEdit(user.id)}
-                      className="px-3 py-1 text-sm text-white bg-blue-600 hover:bg-blue-700 rounded-md cursor-pointer"
-                    >
-                      Edit
-                    </button>
-                    <button
-                      onClick={() => handleDelete(user.id)}
-                      className="px-3 py-1 text-sm text-white bg-red-600 hover:bg-red-700 rounded-md cursor-pointer"
-                    >
-                      Delete
-                    </button>
+              {users.length > 0 ? (
+                users.map((user) => (
+                  <tr key={user.id} className="border-b border-t">
+                    <td className="px-4 py-2">{user.id}</td>
+                    <td className="px-4 py-2">{user.username}</td>
+                    <td className="px-4 py-2">{UserRole[user.roleId]}</td>
+                    <td className="px-4 py-2 space-x-2 flex sm:flex-none">
+                      <button
+                        onClick={() => handleEdit(user.id)}
+                        className="px-3 py-1 text-sm text-white bg-blue-600 hover:bg-blue-700 rounded-md cursor-pointer"
+                      >
+                        Edit
+                      </button>
+                      <button
+                        onClick={() => handleDelete(user.id)}
+                        className="px-3 py-1 text-sm text-white bg-red-600 hover:bg-red-700 rounded-md cursor-pointer"
+                      >
+                        Delete
+                      </button>
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan={7} className="px-4 py-2 text-center">
+                    No users found.
                   </td>
                 </tr>
-              ))}
+              )}
             </tbody>
           </table>
+          <div className="flex justify-between items-center mt-4">
+            <div className="flex flex-col">
+              <label>Range</label>
+              <select
+                className="cursor-pointer"
+                name=""
+                id=""
+                defaultValue={10}
+                onChange={(e) => onPageSizeChange(+e.target.value)}
+              >
+                <option value="5">5</option>
+                <option value="10">10</option>
+                <option value="20">20</option>
+                <option value="50">50</option>
+                <option value="100">100</option>
+              </select>
+            </div>
+            <div className="space-x-2">
+              {pageButtons.map((p, idx) =>
+                typeof p === "number" ? (
+                  <button
+                    key={p}
+                    onClick={() => onPageChange(p)}
+                    className={`px-3 py-1 rounded cursor-pointer ${
+                      p === page ? "bg-blue-500 text-white" : "bg-gray-200"
+                    }`}
+                  >
+                    {p}
+                  </button>
+                ) : (
+                  <span key={idx} className="px-2">
+                    ...
+                  </span>
+                )
+              )}
+            </div>
+          </div>
         </div>
       </div>
       <Modal isOpen={isModalOpen} onClose={handleClose}>

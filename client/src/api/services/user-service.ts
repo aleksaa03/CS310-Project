@@ -1,10 +1,19 @@
 import AxiosInstance from "../axios-instance";
 import { UserRole } from "../../common/enums";
 
-export const getUsers = async () => {
+export const getUsers = async (page: number, pageSize: number, sortExp: string | null, sortOrd: string | null) => {
   try {
-    const response = await AxiosInstance.get("/users", { withCredentials: true });
-    return { success: true, status: response.status, users: response.data.users };
+    const response = await AxiosInstance.get("/users", {
+      withCredentials: true,
+      params: { page, pageSize, sortExp, sortOrd },
+    });
+    return {
+      success: true,
+      status: response.status,
+      users: response.data.users,
+      total: response.data.total,
+      totalPages: response.data.totalPages,
+    };
   } catch (error: any) {
     return { success: false, status: error.response?.status, message: error.response?.data?.message };
   }
