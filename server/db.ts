@@ -11,7 +11,7 @@ const AppDb = new DataSource({
   port: 5432,
   username: "username",
   password: "password",
-  database: "it354_project",
+  database: "cs310_project",
   entities: [User, Movie, Watchlist, Comment, UserLog],
   synchronize: false,
 });
