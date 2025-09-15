@@ -101,12 +101,14 @@ const UserLogTable = ({
                     <td className="px-4 py-2">{UserLogType[log.action]}</td>
                     <td className="px-4 py-2">
                       <abbr className="no-underline" title={log.description}>
-                        {log.description.length > 50 ? log.description.slice(0, 50) + "..." : log.description}
+                        {log.description && log.description.length > 50
+                          ? log.description.slice(0, 50) + "..."
+                          : log.description}
                       </abbr>
                     </td>
                     <td className="px-4 py-2">
                       <abbr className="no-underline" title={log.details}>
-                        {log.details.length > 50 ? log.details.slice(0, 50) + "..." : log.details}
+                        {log.details && log.details.length > 50 ? log.details.slice(0, 50) + "..." : log.details}
                       </abbr>
                     </td>
                     <td className="px-4 py-2">{formatDateTime(log.eventTime)}</td>
